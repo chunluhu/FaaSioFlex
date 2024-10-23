@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sync"
+	"sync" 
 )
 
 // Almacenamos las funciones registradas en un mapa
