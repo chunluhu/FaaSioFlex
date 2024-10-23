@@ -53,8 +53,8 @@ jobs:
       - name: Build and Run Applications
         run: |
           # Definir las aplicaciones iniciales
-          apps=("hello-world" "api_faas")
-
+          apps_l=("hello-world" "api_faas")
+          echo "- List apps_l : ${{ env.apps_l }}"
           # Obtener el tipo de evento
           event_type="${{ github.event_name }}"
 
@@ -67,9 +67,11 @@ jobs:
 
             # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorios
             filtered_apps=()
+            echo "- List filtered_apps : ${{ env.filtered_apps }}"
             input_apps=(${GITHUB_EVENT_INPUTS_APP_NAME})  # Divide en un array usando espacios como delimitador
 
             for input_app in "${input_apps[@]}"; do
+              echo "- List filtered_apps : $input_app"
               if [[ " ${apps[@]} " =~ " ${input_app} " ]]; then
                 filtered_apps+=("$input_app")
               else
