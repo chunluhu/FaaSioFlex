@@ -7,55 +7,51 @@ on:
   workflow_dispatch:
     inputs:
       app_name:
-        description: 'Choose the application to run'
-        required: true
-        default: 'hello-world'
+        description: 'Choose the application to run (leave blank to run all)'
+        required: false
+        default: ''
         type: choice
         options:
+          - ''
           - hello-world
           - api_faas
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.23'
-    - name: Print GitHub Event
-      run: |
-        echo "GitHub Event: ${{ toJson(github.event) }}"
-    - name: Print Event Inputs
-      run: |
-        echo "Event Inputs: ${{ toJson(github.event.inputs) }}"
-    - name: Debug Show current directory and app path
-      run: |
-        echo "Current directory: $(pwd)"
-        echo "App Name: ${{ github.event.inputs.input_name }}"
-        echo "App selected: ${{ github.event.inputs.app_name }}"
-        APP_DIR="src/${{ github.event.inputs.app_name }}"
-        echo "App directory: $APP_DIR"
-        ls "$APP_DIR"  # Listar el contenido para verificar si existe
+      - name: Determine Event Type
+        id: event_type
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "event_type=push" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "event_type=workflow_dispatch" >> $GITHUB_ENV
+          fi
 
-    - name: Build Go application
-      run: |
-        APP_DIR="src/${{ github.event.inputs.app_name }}"
-        echo "Building Go application in $APP_DIR"
-        
-        # Cambiar al directorio de la aplicación y compilar
-        cd "$APP_DIR" || exit
-        go build -o app .
-
-    - name: Build and run Docker container
-      run: |
-        APP_DIR="src/${{ github.event.inputs.app_name }}"
-        echo "Building Docker image from $APP_DIR"
-
-        # Construir la imagen de Docker
-        docker build -t "${{ github.event.inputs.app_name }}" "$APP_DIR"  # Construir desde el directorio correcto
-        docker run --rm "${{ github.event.inputs.app_name }}"
+      - name: Build and Run Applications
+        run: |
+          apps=("hello-world" "api_faas")
+          
+          if [ "${{ env.event_type }}" == "push" ]; then
+            echo "Running all applications because of a push event..."
+            for app in "${apps[@]}"; do
+              echo "Building and running $app..."
+              # Aquí podrías tener los comandos para compilar y ejecutar la app
+            done
+          elif [ "${{ env.event_type }}" == "workflow_dispatch" ]; then
+            echo "Running selected application: ${{ github.event.inputs.app_name }}"
+            if [ "${{ github.event.inputs.app_name }}" == "" ]; then
+              echo "No application selected. Running all applications..."
+              for app in "${apps[@]}"; do
+                echo "Building and running $app..."
+                # Aquí podrías tener los comandos para compilar y ejecutar la app
+              done
+            else
+              echo "Building and running only the selected application: ${{ github.event.inputs.app_name }}"
+              # Aquí podrías tener los comandos para compilar y ejecutar solo la app seleccionada
+            fi
+          fi
