@@ -47,6 +47,9 @@ jobs:
           apps=("hello-world" "api_faas")
           changed_files=(${changed_files})
           filtered_apps=()
+          
+          echo "Changed files: ${changed_files[@]}"
+
           for file in "${changed_files[@]}"; do
             app_name=$(basename $(dirname "$file"))
             if [[ " ${apps[@]} " =~ " ${app_name} " ]]; then
@@ -65,7 +68,8 @@ jobs:
           build_and_push_docker_images() {
             input_apps=("hello-world" "api_faas")
             event_type="${{ github.event_name }}"
-
+            echo "Event Type: $event_type"
+            
             # Login to Docker Hub
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
@@ -74,33 +78,35 @@ jobs:
                 echo "No relevant changes detected. Building and pushing all applications..."
                 for app in "${input_apps[@]}"; do
                   echo "Building Docker image for: $app"
-                  docker build -t ${{ secrets.DOCKER_USERNAME }}$app:latest ./src/$app
+                  docker build -t ${{ secrets.DOCKER_USERNAME }}/$app:latest ./src/$app
                   echo "Pushing Docker image for: $app"
-                  docker push ${{ secrets.DOCKER_USERNAME }}$app:latest
+                  docker push ${{ secrets.DOCKER_USERNAME }}/$app:latest
                 done
               else
+                echo "Relevant changes detected. Building and pushing only the specified applications..."
                 for app in "${{ env.app_to_run }}"; do
                   echo "Building Docker image for only the specified application: $app"
-                  docker build -t ${{ secrets.DOCKER_USERNAME }}$app:latest ./src/$app
+                  docker build -t ${{ secrets.DOCKER_USERNAME }}/$app:latest ./src/$app
                   echo "Pushing Docker image for: $app"
-                  docker push ${{ secrets.DOCKER_USERNAME }}$app:latest
+                  docker push ${{ secrets.DOCKER_USERNAME }}/$app:latest
                 done
               fi
             elif [ "$event_type" == "workflow_dispatch" ]; then
               app_name="${{ github.event.inputs.app_name }}"
+              echo "Selected application: $app_name"
               if [ -z "$app_name" ]; then
                 echo "No application selected. Building and pushing all applications..."
                 for app in "${input_apps[@]}"; do
                   echo "Building Docker image for: $app"
-                  docker build -t ${{ secrets.DOCKER_USERNAME }}$app:latest ./src/$app
+                  docker build -t ${{ secrets.DOCKER_USERNAME }}/$app:latest ./src/$app
                   echo "Pushing Docker image for: $app"
-                  docker push ${{ secrets.DOCKER_USERNAME }}$app:latest
+                  docker push ${{ secrets.DOCKER_USERNAME }}/$app:latest
                 done
               else
                 echo "Building Docker image for only the selected application: $app_name"
-                docker build -t ${{ secrets.DOCKER_USERNAME }}$app_name:latest ./src/$app_name
+                docker build -t ${{ secrets.DOCKER_USERNAME }}/$app_name:latest ./src/$app_name
                 echo "Pushing Docker image for: $app_name"
-                docker push ${{ secrets.DOCKER_USERNAME }}$app_name:latest
+                docker push ${{ secrets.DOCKER_USERNAME }}/$app_name:latest
               fi
             fi
           }
