@@ -17,6 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -25,6 +26,12 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: '1.23'
+
+    - name: Show current directory and app path
+      run: |
+        echo "Current directory: $(pwd)"
+        echo "App directory: src/${{ github.event.inputs.app }}"
+        ls src/${{ github.event.inputs.app }}  # Listar el contenido para verificar si existe
 
     - name: Build and run Docker container
       run: |
