@@ -26,19 +26,19 @@ jobs:  # Define los trabajos que se ejecutarán
       - name: Build Docker Image  # Nombre del paso para construir la imagen Docker
           if: steps.check_dockerfile.outcome == 'success'  # Solo si el paso anterior fue exitoso
           run: |  # Ejecuta los siguientes comandos
-            docker build -t my-go-app:latest .  # Construye la imagen Docker con el nombre "my-go-app:latest"
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/my-go-app:latest .  # Construye la imagen Docker con el nombre "my-go-app:latest"
 
       - name: Check if Docker Image Exists  # Comprueba si la imagen Docker fue construida
           id: check_image  # Asigna un ID al paso
           run: |  # Ejecuta los siguientes comandos
-            if ! docker images -q my-go-app:latest; then  # Verifica si la imagen existe
+            if ! docker images -q {{ secrets.DOCKER_USERNAME }}/my-go-app:latest; then  # Verifica si la imagen existe
               echo "No Docker image found. No image was built."  # Mensaje si no se encuentra la imagen
               exit 1  # Sale del script con código de error
 
       - name: Run Tests  # Nombre del paso para ejecutar pruebas
           if: steps.check_image.outcome == 'success'  # Solo si el paso anterior fue exitoso
           run: |  # Ejecuta los siguientes comandos
-            docker run --rm my-go-app:latest || echo "Error ejecutando la aplicación"  # Ejecuta la aplicación en un contenedor y captura errores
+            docker run --rm {{ secrets.DOCKER_USERNAME }}/my-go-app:latest || echo "Error ejecutando la aplicación"  # Ejecuta la aplicación en un contenedor y captura errores
 
       - name: Login to Docker Hub  # Nombre del paso para iniciar sesión en Docker Hub
           if: steps.check_image.outcome == 'success'  # Solo si la imagen existe
@@ -113,7 +113,20 @@ jobs:  # Define los trabajos que se ejecutarán
     #steps:
       #- name: Checkout Code
         #uses: actions/checkout@v2
-
+      #- name: Deploy to Google Cloud Run
+        #env:
+          #GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+          #GOOGLE_CLOUD_RUN_SERVICE: my-go-app
+          #GOOGLE_REGION: us-central1  # Cambia a la región que elijas
+        #run: |
+          #echo $GOOGLE_CREDENTIALS | base64 --decode > $HOME/gcloud-key.json
+          #gcloud auth activate-service-account --key-file $HOME/gcloud-key.json
+          #gcloud config set project $GOOGLE_PROJECT_ID
+          #gcloud run deploy $GOOGLE_CLOUD_RUN_SERVICE \
+            #--image gcr.io/$GOOGLE_PROJECT_ID/myusername/my-go-app:latest \
+            #--platform managed \
+            #--region $GOOGLE_REGION \
+            #--allow-unauthenticated
       #- name: Deploy to Server
         #if: success()
         #run: |
