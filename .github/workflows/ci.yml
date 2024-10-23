@@ -27,7 +27,12 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: '1.23'
-
+    - name: Print GitHub Event
+      run: |
+        echo "GitHub Event: ${{ toJson(github.event) }}"
+    - name: Print Event Inputs
+      run: |
+        echo "Event Inputs: ${{ toJson(github.event.inputs) }}"
     - name: Debug Show current directory and app path
       run: |
         echo "Current directory: $(pwd)"
