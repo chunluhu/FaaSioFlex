@@ -9,9 +9,9 @@ on:
       app:
         description: 'Choose the application to run'
         required: true
-        default: 'hello_world'  # App por defecto
+        default: 'hello-world'  # Cambiado a hello-world
         options:
-          - hello_world
+          - hello-world  # Cambiado a hello-world
           - api_faas
 
 jobs:
@@ -25,9 +25,9 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.23'
+        go-version: '1.20'
 
-    - name: Show current directory and app path
+    - name: Debug: Show current directory and app path
       run: |
         echo "Current directory: $(pwd)"
         echo "App directory: src/${{ github.event.inputs.app }}"
