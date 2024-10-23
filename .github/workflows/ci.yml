@@ -11,7 +11,7 @@ on:
         required: true
         default: 'hola-mundo'  # App por defecto
         options:
-          - hola_mundo
+          - hola-mundo
           - funciones_api
 
 jobs:
