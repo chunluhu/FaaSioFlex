@@ -52,52 +52,66 @@ jobs:
           echo "Check which application will run: ${{ env.app_to_run }}"
       - name: Build and Run Applications
         run: |
-          apps_l=("hello-world" "api_faas")
-          echo "filtered_apps : ${{ apps_l }}"
-          if [ "${{ env.event_type }}" == "push" ]; then
+          # Definir las aplicaciones iniciales
+          apps=("hello-world" "api_faas")
+
+          # Obtener el tipo de evento
+          event_type="${{ github.event_name }}"
+
+          if [ "$event_type" == "push" ]; then
             echo "Running all applications because of a push event..."
+            
             # Obtener las aplicaciones en el directorio src/
             apps=($(ls src/))
-            echo "Subdirectorios: ${{ apps }}"
+            echo "Subdirectorios: ${apps[@]}"
+
             # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorios
             filtered_apps=()
-            echo "filtered_apps : ${{ filtered_apps }}"
-            for input_app in ${{ github.event.inputs.app_name }}; do
+            input_apps=(${GITHUB_EVENT_INPUTS_APP_NAME})  # Divide en un array usando espacios como delimitador
+
+            for input_app in "${input_apps[@]}"; do
               if [[ " ${apps[@]} " =~ " ${input_app} " ]]; then
                 filtered_apps+=("$input_app")
               else
                 echo "Warning: La aplicación especificada '${input_app}' no se encuentra en el directorio src/."
               fi
             done
-        
+
             # Comprobar si no hay aplicaciones filtradas
             if [ ${#filtered_apps[@]} -eq 0 ]; then
               echo "Error: No hay aplicaciones válidas para ejecutar."
               exit 1
             fi
+
             # Verificamos si app_to_run está vacío. Si lo está hay que ejecutar todas
             if [ -z "${{ env.app_to_run }}" ]; then
               echo "No relevant changes detected. Running all applications..."
               echo "Aplicaciones a ejecutar: ${filtered_apps[@]}"
               for app in "${filtered_apps[@]}"; do
                 echo "Building and running $app..."
-                echo "tener los comandos para compilar y ejecutar la app: ${{ app }}"
+                echo "tener los comandos para compilar y ejecutar la app: $app"
               done
             else
-                echo "Relevant changes detected. Running only the specified application: ${{ env.app_to_run }}"
+              echo "Relevant changes detected. Running only the specified application: ${{ env.app_to_run }}"
+              if [[ " ${filtered_apps[@]} " =~ " ${{ env.app_to_run }} " ]]; then
                 echo "Building and running only the selected application: ${{ env.app_to_run }}"
                 echo "Tener los comandos para compilar y ejecutar solo la app seleccionada : ${{ env.app_to_run }}"
+              else
+                echo "Error: La aplicación '${{ env.app_to_run }}' no es válida."
+                exit 1
+              fi
             fi
-          elif [ "${{ env.event_type }}" == "workflow_dispatch" ]; then
+
+          elif [ "$event_type" == "workflow_dispatch" ]; then
             echo "Running selected application: ${{ github.event.inputs.app_name }}"
-            if [ "${{ github.event.inputs.app_name }}" == "" ]; then
+            if [ -z "${{ github.event.inputs.app_name }}" ]; then
               echo "No application selected. Running all applications..."
               for app in "${apps[@]}"; do
                 echo "Building and running $app..."
-                echo "Tener los comandos para compilar y ejecutar la app: ${{ env.app_to_run }}"
+                echo "Tener los comandos para compilar y ejecutar la app: $app"
               done
             else
               echo "Building and running only the selected application: ${{ github.event.inputs.app_name }}"
-              # Aquí podrías tener los comandos para compilar y ejecutar solo la app seleccionada
+              # Aquí deberías añadir tus comandos para compilar y ejecutar solo la app seleccionada
             fi
           fi
