@@ -9,10 +9,9 @@ on:
       app_name:
         description: 'Choose the application to run (leave blank to run all)'
         required: false
-        default: ''
+        default: 'hello-world'
         type: choice
         options:
-          - ''
           - hello-world
           - api_faas
 
