@@ -27,7 +27,7 @@ jobs:
       with:
         go-version: '1.20'
 
-    - name: Debug-- Show current directory and app path
+    - name: Debug Show current directory and app path
       run: |
         echo "Current directory: $(pwd)"
         echo "App selected: ${{ github.event.inputs.app }}"
@@ -35,17 +35,21 @@ jobs:
         echo "App directory: $APP_DIR"
         ls "$APP_DIR"  # Listar el contenido para verificar si existe
 
+    - name: Build Go application
+      run: |
+        APP_DIR="src/${{ github.event.inputs.app }}"
+        echo "Building Go application in $APP_DIR"
+        
+        # Cambiar al directorio de la aplicación y compilar
+        cd "$APP_DIR" || exit
+        go build -o app .
+
     - name: Build and run Docker container
       run: |
         APP_DIR="src/${{ github.event.inputs.app }}"
         echo "Building Docker image from $APP_DIR"
-        
-        # Verificar que APP_DIR no esté vacío
-        if [ -z "$APP_DIR" ]; then
-          echo "Error: APP_DIR is empty"
-          exit 1
-        fi
-        
+
         # Construir la imagen de Docker
-        docker build -t "${{ github.event.inputs.app }}" "$APP_DIR"
+        docker build -t "${{ github.event.inputs.app }}" "$APP_DIR"  # Construir desde el directorio correcto
         docker run --rm "${{ github.event.inputs.app }}"
+
