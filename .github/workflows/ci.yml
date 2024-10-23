@@ -4,15 +4,19 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Permite ejecutar manualmente el flujo de trabajo
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'Choose the application to run'
+        required: true
+        default: 'hola-mundo'  # App por defecto
+        options:
+          - hola_mundo
+          - funciones_api
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        app: [hola-mundo, funciones_api]  # Lista de aplicaciones
 
     steps:
     - name: Checkout code
@@ -21,10 +25,10 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.23'  # Ajusta la versión de Go según tus necesidades
+        go-version: '1.20'
 
     - name: Build and run Docker container
       run: |
-        cd ${{ matrix.app }}  # Cambia al directorio de la aplicación
-        docker build -t ${{ matrix.app }} .
-        docker run --rm ${{ matrix.app }}
+        cd ${{ github.event.inputs.app }}  # Cambia al directorio de la aplicación elegida
+        docker build -t ${{ github.event.inputs.app }} .
+        docker run --rm ${{ github.event.inputs.app }}
