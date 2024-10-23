@@ -54,7 +54,9 @@ jobs:
         run: |
           # Definir las aplicaciones iniciales
           apps_l=("hello-world" "api_faas")
-          echo "- List apps_l : ${{ env.apps_l }}"
+          
+          
+          echo "- List apps_l : ${apps_l[@]}"
           # Obtener el tipo de evento
           event_type="${{ github.event_name }}"
 
@@ -67,7 +69,7 @@ jobs:
 
             # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorios
             filtered_apps=()
-            echo "- List filtered_apps : ${{ env.filtered_apps }}"
+            echo "- List filtered_apps : ${filtered_apps[@]}"
             input_apps=(${GITHUB_EVENT_INPUTS_APP_NAME})  # Divide en un array usando espacios como delimitador
 
             for input_app in "${input_apps[@]}"; do
@@ -78,7 +80,7 @@ jobs:
                 echo "Warning: La aplicación especificada '${input_app}' no se encuentra en el directorio src/."
               fi
             done
-
+            echo " filtered_apps: ${filtered_apps[@]}"
             # Comprobar si no hay aplicaciones filtradas
             if [ ${#filtered_apps[@]} -eq 0 ]; then
               echo "Error: No hay aplicaciones válidas para ejecutar."
