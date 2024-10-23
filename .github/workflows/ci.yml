@@ -30,6 +30,10 @@ jobs:
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "event_type=workflow_dispatch" >> $GITHUB_ENV
           fi
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Clonar el historial completo para permitir git diff
       - name: Get Changed Files
         id: changes
         run: |
