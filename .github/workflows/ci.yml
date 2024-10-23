@@ -52,8 +52,8 @@ jobs:
           echo "Check which application will run: ${{ env.app_to_run }}"
       - name: Build and Run Applications
         run: |
-          apps=("hello-world" "api_faas")
-          
+          apps_l=("hello-world" "api_faas")
+          echo "filtered_apps : ${{ apps_l }}"
           if [ "${{ env.event_type }}" == "push" ]; then
             echo "Running all applications because of a push event..."
             # Obtener las aplicaciones en el directorio src/
