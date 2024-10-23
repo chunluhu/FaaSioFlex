@@ -30,7 +30,26 @@ jobs:
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "event_type=workflow_dispatch" >> $GITHUB_ENV
           fi
+      - name: Get Changed Files
+        id: changes
+        run: |
+          # Obtener archivos que han cambiado en la última confirmación
+          echo "changed_files=$(git diff --name-only HEAD^ HEAD)" >> $GITHUB_ENV
 
+      - name: Determine Application to Run
+        id: app_to_run
+        run: |
+          if echo "${{ env.changed_files }}" | grep -q "hello-world"; then
+            echo "app_to_run=hello-world" >> $GITHUB_ENV
+          elif echo "${{ env.changed_files }}" | grep -q "api_faas"; then
+            echo "app_to_run=api_faas" >> $GITHUB_ENV
+          else
+            echo "No relevant application changes found."
+            exit 0 # Salir sin hacer nada si no se han encontrado cambios relevantes
+          fi
+      - name: Check which application will run
+        run: |
+          echo "Check which application will run: ${{ env.app_to_run }}"
       - name: Build and Run Applications
         run: |
           apps=("hello-world" "api_faas")
