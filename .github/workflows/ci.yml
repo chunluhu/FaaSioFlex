@@ -34,8 +34,42 @@ jobs:
         id: changes
         run: |
           # Obtener archivos que han cambiado en la última confirmación
-          echo "changed_files=$(git diff --name-only HEAD^ HEAD)" >> $GITHUB_ENV
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            echo "changed_files=$(git diff --name-only HEAD^ HEAD)" >> $GITHUB_ENV
+          else
+            echo "No previous commits found. No files to check."
+            echo "changed_files=" >> $GITHUB_ENV  # Asigna una cadena vacía si no hay commits
+          fi
+      
+      - name: Filter Applications Based on Changes
+        id: filter_apps
+        run: |
+          # Listar aplicaciones
+          apps=("hello-world" "api_faas")
+          
+          # Convertir el string de archivos cambiados en un array
+          changed_files=(${changed_files})
+          echo "Changed files: ${changed_files[@]}"
+          
+          # Filtrar aplicaciones que se han modificado
+          filtered_apps=()
+          for file in "${changed_files[@]}"; do
+            # Suponiendo que los archivos son en formato 'src/app_name/file.ext'
+            app_name=$(basename $(dirname "$file"))  # Obtener el nombre de la carpeta (app)
+            if [[ " ${apps[@]} " =~ " ${app_name} " ]]; then
+              filtered_apps+=("$app_name")
+            fi
+          done
 
+          # Guardar aplicaciones filtradas como variable de entorno
+          if [ ${#filtered_apps[@]} -eq 0 ]; then
+            echo "No valid applications modified."
+            echo "filtered_apps=" >> $GITHUB_ENV  # Asigna una cadena vacía si no hay cambios válidos
+          else
+            echo "Filtered applications: ${filtered_apps[@]}"
+            echo "filtered_apps=${filtered_apps[@]}" >> $GITHUB_ENV
+          fi
+   
       - name: Determine Application to Run
         id: app_to_run
         run: |
@@ -64,7 +98,7 @@ jobs:
             echo "Subdirectorios: ${apps[@]}"
             # Definir las aplicaciones iniciales
             input_apps=("hello-world" "api_faas")      
-            echo "- List input_apps : ${input_apps[@]}"
+            echo "input_apps : ${input_apps[@]}"
             # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorio
             for app in "${input_apps[@]}"; do
               echo "app to list : $app"
