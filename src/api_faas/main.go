@@ -62,6 +62,6 @@ func main() {
 	http.HandleFunc("/registrar", registrarFuncion)
 	http.HandleFunc("/ejecutar", ejecutarFuncion)
 	
-	fmt.Println("Servidor escuchando en :5000")
+	fmt.Println("Servidor escuchando en :5000 . Prueba 1")
 	http.ListenAndServe(":5000", nil)
 }
