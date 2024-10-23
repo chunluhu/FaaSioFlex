@@ -67,9 +67,9 @@ jobs:
             echo "- List input_apps : ${input_apps[@]}"
             # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorio
             for app in "${input_apps[@]}"; do
-              echo "- List filtered_apps : $app"
+              echo "app to list : $app"
               if [[ " ${apps[@]} " =~ " ${app} " ]]; then
-                filtered_apps+=("$input_app")
+                filtered_apps+=("$app")
               else
                 echo "Warning: La aplicación especificada '${input_app}' no se encuentra en el directorio src/."
               fi
