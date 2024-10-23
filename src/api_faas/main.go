@@ -14,7 +14,7 @@ var mu sync.Mutex
 // Estructura para la solicitud de registro
 type Registro struct {
 	Nombre string `json:"nombre"`
-	Codigo string `json:"codigo"`
+	Codigo string `json:"codigo"`  
 }
 
 // Función para registrar una función
