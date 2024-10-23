@@ -58,7 +58,18 @@ jobs:
             echo "Running all applications because of a push event..."
             for app in "${apps[@]}"; do
               echo "Building and running $app..."
-              # Aquí podrías tener los comandos para compilar y ejecutar la app
+              # Verificamos si app_to_run está vacío
+              if [ -z "${{ env.app_to_run }}" ]; then
+                echo "No relevant changes detected. Running all applications..."
+                for app in "${apps[@]}"; do
+                  echo "Building and running $app..."
+                  echo "tener los comandos para compilar y ejecutar la app"
+                done
+              else
+                echo "Relevant changes detected. Running only the specified application: ${{ env.app_to_run }}"
+                echo "Building and running only the selected application: ${{ env.app_to_run }}"
+                echo "Tener los comandos para compilar y ejecutar solo la app seleccionada : ${{ env.app_to_run }}"
+              fi
             done
           elif [ "${{ env.event_type }}" == "workflow_dispatch" ]; then
             echo "Running selected application: ${{ github.event.inputs.app_name }}"
@@ -66,7 +77,7 @@ jobs:
               echo "No application selected. Running all applications..."
               for app in "${apps[@]}"; do
                 echo "Building and running $app..."
-                # Aquí podrías tener los comandos para compilar y ejecutar la app
+                echo "Tener los comandos para compilar y ejecutar la app: ${{ env.app_to_run }}"
               done
             else
               echo "Building and running only the selected application: ${{ github.event.inputs.app_name }}"
