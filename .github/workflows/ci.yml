@@ -70,6 +70,8 @@ jobs:
             # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorios
             filtered_apps=()
             echo "- List filtered_apps : ${filtered_apps[@]}"
+            echo " Listado de aplicaciones: (${GITHUB_EVENT_INPUTS_APP_NAME})"
+            echo " Listado de aplicaciones: (${{ github.event.inputs.app_name }})"
             input_apps=(${GITHUB_EVENT_INPUTS_APP_NAME})  # Divide en un array usando espacios como delimitador
 
             for input_app in "${input_apps[@]}"; do
