@@ -71,23 +71,13 @@ jobs:
             echo "filtered_apps=" >> $GITHUB_ENV  # Asigna una cadena vacía si no hay cambios válidos
           else
             echo "Filtered applications: ${filtered_apps[@]}"
-            echo "filtered_apps=${filtered_apps[@]}" >> $GITHUB_ENV
+            echo "app_to_run=${filtered_apps[@]}" >> $GITHUB_ENV
           fi
-   
-      - name: Determine Application to Run
-        id: app_to_run
-        run: |
-          if echo "${{ env.changed_files }}" | grep -q "hello-world"; then
-            echo "app_to_run=hello-world" >> $GITHUB_ENV
-          elif echo "${{ env.changed_files }}" | grep -q "api_faas"; then
-            echo "app_to_run=api_faas" >> $GITHUB_ENV
-          else
-            echo "No relevant application changes found."
-            exit 0 # Salir sin hacer nada si no se han encontrado cambios relevantes
-          fi
+  
       - name: Check which application will run
         run: |
           echo "Check which application will run: ${{ env.app_to_run }}"
+          
       - name: Build and Run Applications
         run: |
          
@@ -96,29 +86,31 @@ jobs:
 
           if [ "$event_type" == "push" ]; then
             echo "Running all applications because of a push event..."
-            
-            # Obtener las aplicaciones en el directorio src/
-            apps=($(ls src/))
-            echo "Subdirectorios: ${apps[@]}"
-            # Definir las aplicaciones iniciales
-            input_apps=("hello-world" "api_faas")      
-            echo "input_apps : ${input_apps[@]}"
-            # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorio
-            for app in "${input_apps[@]}"; do
-              echo "app to list : $app"
-              if [[ " ${apps[@]} " =~ " ${app} " ]]; then
-                filtered_apps+=("$app")
-              else
-                echo "Warning: La aplicación especificada '${input_app}' no se encuentra en el directorio src/."
+            if [ -z "${{ env.app_to_run }}" ]; then
+              # Obtener las aplicaciones en el directorio src/
+              apps=($(ls src/))
+              echo "Subdirectorios: ${apps[@]}"
+              # Definir las aplicaciones iniciales
+              input_apps=("hello-world" "api_faas")      
+              echo "input_apps : ${input_apps[@]}"
+              # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorio
+              for app in "${input_apps[@]}"; do
+                echo "app to list : $app"
+                if [[ " ${apps[@]} " =~ " ${app} " ]]; then
+                  filtered_apps+=("$app")
+                else
+                  echo "Warning: La aplicación especificada '${input_app}' no se encuentra en el directorio src/."
+                fi
+              done
+              echo " filtered_apps: ${filtered_apps[@]}"
+              # Comprobar si no hay aplicaciones filtradas
+              if [ ${#filtered_apps[@]} -eq 0 ]; then
+                echo "Error: No hay aplicaciones válidas para ejecutar."
+                exit 1
               fi
-            done
-            echo " filtered_apps: ${filtered_apps[@]}"
-            # Comprobar si no hay aplicaciones filtradas
-            if [ ${#filtered_apps[@]} -eq 0 ]; then
-              echo "Error: No hay aplicaciones válidas para ejecutar."
-              exit 1
+            else
+              echo "env.app_to_run no está vacío, no se ejecutará la app: ${{ env.app_to_run }}."
             fi
-
             # Verificamos si app_to_run está vacío. Si lo está hay que ejecutar todas
             if [ -z "${{ env.app_to_run }}" ]; then
               echo "No relevant changes detected. Running all applications..."
