@@ -52,4 +52,3 @@ jobs:
         # Construir la imagen de Docker
         docker build -t "${{ github.event.inputs.app }}" "$APP_DIR"  # Construir desde el directorio correcto
         docker run --rm "${{ github.event.inputs.app }}"
-
