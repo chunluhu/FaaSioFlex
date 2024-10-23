@@ -10,6 +10,7 @@ on:
         description: 'Choose the application to run'
         required: true
         default: 'hello-world'
+        type: choice
         options:
           - hello-world
           - api_faas
