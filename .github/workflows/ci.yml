@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      app:
+      app_name:
         description: 'Choose the application to run'
         required: true
         default: 'hello-world'
@@ -31,14 +31,15 @@ jobs:
     - name: Debug Show current directory and app path
       run: |
         echo "Current directory: $(pwd)"
-        echo "App selected: ${{ github.event.inputs.app }}"
-        APP_DIR="src/${{ github.event.inputs.app }}"
+        echo "App Name: ${{ github.event.inputs }}"
+        echo "App selected: ${{ github.event.inputs.app_name }}"
+        APP_DIR="src/${{ github.event.inputs.app_name }}"
         echo "App directory: $APP_DIR"
         ls "$APP_DIR"  # Listar el contenido para verificar si existe
 
     - name: Build Go application
       run: |
-        APP_DIR="src/${{ github.event.inputs.app }}"
+        APP_DIR="src/${{ github.event.inputs.app_name }}"
         echo "Building Go application in $APP_DIR"
         
         # Cambiar al directorio de la aplicación y compilar
@@ -47,9 +48,9 @@ jobs:
 
     - name: Build and run Docker container
       run: |
-        APP_DIR="src/${{ github.event.inputs.app }}"
+        APP_DIR="src/${{ github.event.inputs.app_name }}"
         echo "Building Docker image from $APP_DIR"
 
         # Construir la imagen de Docker
-        docker build -t "${{ github.event.inputs.app }}" "$APP_DIR"  # Construir desde el directorio correcto
-        docker run --rm "${{ github.event.inputs.app }}"
+        docker build -t "${{ github.event.inputs.app_name }}" "$APP_DIR"  # Construir desde el directorio correcto
+        docker run --rm "${{ github.event.inputs.app_name }}"
