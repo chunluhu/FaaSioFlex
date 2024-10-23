@@ -72,6 +72,11 @@ jobs:
             echo "- List filtered_apps : ${filtered_apps[@]}"
             echo " Listado de aplicaciones: (${GITHUB_EVENT_INPUTS_APP_NAME})"
             echo " Listado de aplicaciones: (${{ github.event.inputs.app_name }})"
+            input_appsm=(${{ github.event.inputs.app_name }})  # Usar la entrada directamente
+
+            # Imprimir valores de entrada
+            echo "Aplicaciones de entrada: ${{ github.event.inputs.app_name }}"
+            echo "Aplicaciones de entrada (como array): ${input_appsm[@]}
             input_apps=(${GITHUB_EVENT_INPUTS_APP_NAME})  # Divide en un array usando espacios como delimitador
 
             for input_app in "${input_apps[@]}"; do
