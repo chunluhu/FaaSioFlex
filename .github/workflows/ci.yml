@@ -29,39 +29,53 @@ jobs:
             echo "event_type=push" >> $GITHUB_ENV
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "event_type=workflow_dispatch" >> $GITHUB_ENV
+          else
+            echo "event_type=other" >> $GITHUB_ENV  # Captura otro tipo de evento
           fi
 
       - name: Get Changed Files
         id: changes
         run: |
+          # Obtener archivos que han cambiado en la última confirmación
           if [ $(git rev-list --count HEAD) -gt 1 ]; then
             echo "changed_files=$(git diff --name-only HEAD^ HEAD)" >> $GITHUB_ENV
           else
             echo "No previous commits found. No files to check."
-            echo "changed_files=" >> $GITHUB_ENV
+            echo "changed_files=" >> $GITHUB_ENV  # Asigna una cadena vacía si no hay commits
           fi
 
       - name: Filter Applications Based on Changes
         id: app_to_run
         run: |
+          # Listar aplicaciones
           apps=("hello-world" "api_faas")
-          changed_files=(${changed_files})
-          filtered_apps=()
           
+          # Convertir el string de archivos cambiados en un array
+          changed_files=(${changed_files})
           echo "Changed files: ${changed_files[@]}"
-
+          
+          # Filtrar aplicaciones que se han modificado
+          filtered_apps=()
           for file in "${changed_files[@]}"; do
-            app_name=$(basename $(dirname "$file"))
+            # Suponiendo que los archivos son en formato 'src/app_name/file.ext'
+            app_name=$(basename $(dirname "$file"))  # Obtener el nombre de la carpeta (app)
             if [[ " ${apps[@]} " =~ " ${app_name} " ]]; then
               filtered_apps+=("$app_name")
             fi
           done
-          
+
+          # Guardar aplicaciones filtradas como variable de entorno
           if [ ${#filtered_apps[@]} -eq 0 ]; then
-            echo "app_to_run=" >> $GITHUB_ENV
+            echo "No valid applications modified."
+            echo "app_to_run=" >> $GITHUB_ENV  # Asigna una cadena vacía si no hay cambios válidos
           else
+            echo "Filtered applications: ${filtered_apps[@]}"
             echo "app_to_run=${filtered_apps[@]}" >> $GITHUB_ENV
           fi
+  
+      - name: Check which application will run
+        run: |
+          echo "Check which application will run: ${{ env.app_to_run }}"
 
       - name: Build and Push Docker Images
         run: |
