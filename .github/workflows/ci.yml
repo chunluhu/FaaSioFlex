@@ -52,11 +52,7 @@ jobs:
           echo "Check which application will run: ${{ env.app_to_run }}"
       - name: Build and Run Applications
         run: |
-          # Definir las aplicaciones iniciales
-          apps_l=("hello-world" "api_faas")
-          
-          
-          echo "- List apps_l : ${apps_l[@]}"
+         
           # Obtener el tipo de evento
           event_type="${{ github.event_name }}"
 
@@ -66,22 +62,13 @@ jobs:
             # Obtener las aplicaciones en el directorio src/
             apps=($(ls src/))
             echo "Subdirectorios: ${apps[@]}"
-
-            # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorios
-            filtered_apps=()
-            echo "- List filtered_apps : ${filtered_apps[@]}"
-            echo " Listado de aplicaciones: (${GITHUB_EVENT_INPUTS_APP_NAME})"
-            echo " Listado de aplicaciones: (${{ github.event.inputs.app_name }})"
-            input_appsm=(${{ github.event.inputs.app_name }})  # Usar la entrada directamente
-
-            # Imprimir valores de entrada
-            echo "Aplicaciones de entrada: ${{ github.event.inputs.app_name }}"
-            echo "Aplicaciones de entrada (como array): ${input_appsm[@]}"
-            input_apps=(${GITHUB_EVENT_INPUTS_APP_NAME})  # Divide en un array usando espacios como delimitador
-
-            for input_app in "${input_appsm[@]}"; do
-              echo "- List filtered_apps : $input_app"
-              if [[ " ${apps[@]} " =~ " ${input_app} " ]]; then
+            # Definir las aplicaciones iniciales
+            input_apps=("hello-world" "api_faas")      
+            echo "- List input_apps : ${input_apps[@]}"
+            # Filtrar las aplicaciones que están en los inputs y en el listado de subdirectorio
+            for app in "${input_apps[@]}"; do
+              echo "- List filtered_apps : $app"
+              if [[ " ${apps[@]} " =~ " ${app} " ]]; then
                 filtered_apps+=("$input_app")
               else
                 echo "Warning: La aplicación especificada '${input_app}' no se encuentra en el directorio src/."
