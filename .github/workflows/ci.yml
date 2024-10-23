@@ -31,7 +31,7 @@ jobs:
     - name: Debug Show current directory and app path
       run: |
         echo "Current directory: $(pwd)"
-        echo "App Name: ${{ github.event.inputs }}"
+        echo "App Name: ${{ github.event.inputs.input_name }}"
         echo "App selected: ${{ github.event.inputs.app_name }}"
         APP_DIR="src/${{ github.event.inputs.app_name }}"
         echo "App directory: $APP_DIR"
