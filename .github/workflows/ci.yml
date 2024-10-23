@@ -9,10 +9,10 @@ on:
       app:
         description: 'Choose the application to run'
         required: true
-        default: 'hola-mundo'  # App por defecto
+        default: 'hello_world'  # App por defecto
         options:
-          - hola-mundo
-          - funciones_api
+          - hello_world
+          - api_faas
 
 jobs:
   build:
@@ -29,6 +29,6 @@ jobs:
 
     - name: Build and run Docker container
       run: |
-        cd ${{ github.event.inputs.app }}  # Cambia al directorio de la aplicación elegida
+        cd src/${{ github.event.inputs.app }}  # Cambia al directorio de la aplicación elegida
         docker build -t ${{ github.event.inputs.app }} .
         docker run --rm ${{ github.event.inputs.app }}
