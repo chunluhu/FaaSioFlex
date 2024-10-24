@@ -5,9 +5,9 @@ on:
     paths:
       - 'src/hello-world/**'  # Solo ejecuta el flujo si se modifica algo en hello-world
       - 'src/api_faas/**'      # Solo ejecuta el flujo si se modifica algo en api_faas
-    paths-ignore:
-      - 'src/auth/**'  # Ignorar cualquier cambio en este directorio
-      - 'src/auth_react/**'  # Ignorar otros subdirectorios no registrados
+    #paths-ignore: # Sólo se usa o path o path-ignoe no las dos directivas. 
+      #- 'src/auth/**'  # Ignorar cualquier cambio en este directorio
+      #- 'src/auth_react/**'  # Ignorar otros subdirectorios no registrados
     branches:
       - main
   workflow_dispatch:
