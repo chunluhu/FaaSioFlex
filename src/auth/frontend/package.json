@@ -1,0 +1,15 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "tsc && node dist/app.js",
+    "dev": "ts-node-dev src/app.ts"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3",
+    "ts-node-dev": "^1.1.1"
+  }
+}
