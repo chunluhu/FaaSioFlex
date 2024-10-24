@@ -25,28 +25,27 @@ auth/
 │
 └── README.md            # Documentación del proyecto
 
-Si usamos Node /Typescript/Goland mejor crear:
+Si usamos Node y Typescript para froneend y Goland para backend, mejor crear:
 
 auth/
 │
-├── backend/               # Backend en TypeScript
-│   ├── src/               # Código fuente del backend
-│   │   ├── app.ts         # Archivo principal para iniciar el servidor
-│   │   ├── controllers/   # Controladores para manejar las peticiones
-│   │   │   ├── auth.ts    # Controlador de autenticación
-│   │   ├── models/        # Modelos para la lógica de negocio
-│   │   ├── routes/        # Definición de las rutas de la API
-│   │   ├── services/      # Servicios para la lógica de negocio
-│   ├── package.json       # Dependencias de Node.js
-│   ├── tsconfig.json      # Configuración de TypeScript
-│   └── ...                # Otros archivos
+├── backend/                 # Backend en Go
+│   ├── main.go              # Archivo principal del servidor
+│   ├── controllers/         # Controladores de las rutas
+│   ├── models/              # Modelos para la lógica de negocio
+│   ├── routes/              # Definición de las rutas de la API
+│   ├── services/            # Servicios y lógica de autenticación
+│   └── go.mod               # Módulos de Go
 │
-├── frontend/              # Frontend en TypeScript
-│   ├── public/            # Archivos públicos (HTML, CSS, imágenes)
-│   ├── src/               # Código TypeScript del frontend
-│   └── ...                # Otros archivos
+├── frontend/                # Frontend en Node.js y TypeScript
+│   ├── public/              # Archivos públicos (HTML, CSS)
+│   ├── src/                 # Código fuente del frontend
+│   │   ├── app.ts           # Lógica de interacción con la API
+│   ├── package.json         # Dependencias de Node.js
+│   ├── tsconfig.json        # Configuración de TypeScript
+│   └── ...
 │
-└── README.md              # Documentación del proyecto
+└── README.md                # Documentación del proyecto
 
 * Nota: Se debe decidir: 
       1. Authenticación: 
