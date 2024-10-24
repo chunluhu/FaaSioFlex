@@ -1,0 +1,31 @@
+Creamos un directorio par ael desarrollo del servicio con react y typescript en la parte front-end y Goland para el API backend. 
+La estructura de directorios para esta opción es:
+auth_react/
+│
+├── web/                 # Proyecto de la aplicación web (React con TypeScript)
+│   ├── public/          # Archivos públicos como HTML, imágenes, etc.
+│   ├── src/             # Código fuente del proyecto web
+│   │   ├── components/  # Componentes reutilizables
+│   │   ├── pages/       # Páginas principales (Login, Register, etc.)
+│   │   ├── services/    # Servicios API (peticiones HTTP a backend)
+│   │   ├── utils/       # Utilidades y helpers
+│   │   ├── App.tsx      # Componente principal de la app web
+│   │   ├── index.tsx    # Entrada principal de React
+│   ├── package.json     # Dependencias del proyecto web
+│   ├── tsconfig.json    # Configuración de TypeScript
+│   └── ...              # Otros archivos de configuración (Webpack, Babel, etc.)
+│
+├── mobile/              # Proyecto de la aplicación móvil (React Native con TypeScript)
+│   ├── android/         # Archivos específicos de Android
+│   ├── ios/             # Archivos específicos de iOS
+│   ├── src/             # Código fuente de la app móvil
+│   │   ├── components/  # Componentes reutilizables
+│   │   ├── pages/       # Páginas principales (Login, Register, etc.)
+│   │   ├── services/    # Servicios API (peticiones HTTP a backend)
+│   │   ├── utils/       # Utilidades y helpers
+│   │   ├── App.tsx      # Componente principal de la app móvil
+│   ├── package.json     # Dependencias del proyecto móvil
+│   ├── tsconfig.json    # Configuración de TypeScript
+│   └── ...              # Otros archivos de configuración (Metro, etc.)
+│
+└── README.md            # Documentación del proyecto
