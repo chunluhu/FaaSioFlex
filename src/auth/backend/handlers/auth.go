@@ -14,6 +14,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // Aquí podría agregar validaciones para el email
     token, err := services.Register(user)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
