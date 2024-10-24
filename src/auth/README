@@ -1,0 +1,19 @@
+Proceso de autenticación con DEX, APISEX, NATS y la Base de datos de Nats. Tendremos que realizar dos fases:
+- Fase de registro: dode los usuarios nos prestan su información y se crea la credenciales de usuario.
+- Fase de uso_El usuario se authentica en el servicio FaaS para posterirmente poder registrar funciones o usar funciones de otros usuarios.
+    
+
+* Nota: Se debe decidir: 
+      1. Authenticación: 
+          A) Proceso de authtenticación: Si el proceso de autentiocación se realizará tan sólo con usuario/passwrd o requerira de una autenticción
+             vicredenciales.
+          B) Si se decide que las funciones registradas por los usuarios están en abierto:
+                     - Se debe realiar algún proceso de tokenixación?
+             Si hay que autentucarse para usar las funciones registradas del resto de usuarios;
+                     - Creamos un proceso de id temporal par ael uso de una cierta función o conjutno de funciones?
+                     - Crear un id para todsa ls peticiones sobre el resto de funciones
+  
+     2. Registro y usuo de funciones:  
+          A) si las funciones rgistradas están abiertas al público en general o son privadas al servicio. Es decir,
+             si hay ue autenticarse al servicio FaaSioFlex para poder usar las funciones registradas del resto de usuarios o no hace falta.
+               
