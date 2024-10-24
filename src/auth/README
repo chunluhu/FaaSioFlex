@@ -2,6 +2,29 @@ Proceso de autenticación con DEX, APISEX, NATS y la Base de datos de Nats. Tend
 - Fase de registro: dode los usuarios nos prestan su información y se crea la credenciales de usuario.
 - Fase de uso_El usuario se authentica en el servicio FaaS para posterirmente poder registrar funciones o usar funciones de otros usuarios.
     
+auth/
+│
+├── backend/             # Código fuente del backend en Golang
+│   ├── main.go          # Archivo principal para iniciar el servidor
+│   ├── handlers/        # Controladores para manejar las peticiones
+│   │   ├── auth.go      # Funciones para registro y autenticación
+│   │   └── ...          # Otros controladores
+│   ├── models/          # Modelos para manejar la lógica de negocio
+│   │   ├── user.go      # Modelo de usuario
+│   │   └── ...          # Otros modelos
+│   ├── services/        # Servicios para lógica de negocio (llamadas a la DB, etc.)
+│   ├── routes/          # Rutas de la API
+│   ├── config/          # Configuraciones (conexiones a DB, variables de entorno)
+│   └── ...              # Otros archivos (middlewares, etc.)
+│
+├── frontend/            # Código fuente del frontend en Golang (HTML, CSS, JS)
+│   ├── index.html       # Archivo HTML principal
+│   ├── styles/          # Archivos CSS
+│   ├── js/              # Archivos JavaScript
+│   └── ...              # Otros archivos estáticos (imágenes, fuentes, etc.)
+│
+└── README.md            # Documentación del proyecto
+
 
 * Nota: Se debe decidir: 
       1. Authenticación: 
