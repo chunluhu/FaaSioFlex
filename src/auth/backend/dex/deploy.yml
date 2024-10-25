@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex
+  labels:
+    app: dex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dex
+  template:
+    metadata:
+      labels:
+        app: dex
+    spec:
+      containers:
+        - name: dex
+          image: quay.io/dexidp/dex:v2.29.0 # Reemplaza con la versión que estés utilizando
+          args: [
+            "serve",
+            "/etc/dex/config.yaml"
+          ]
+          ports:
+            - containerPort: 5556
+          volumeMounts:
+            - name: dex-config
+              mountPath: /etc/dex
+      volumes:
+        - name: dex-config
+          configMap:
+            name: dex-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dex
+spec:
+  ports:
+    - port: 5556
+      targetPort: 5556
+  selector:
+    app: dex
