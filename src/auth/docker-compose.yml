@@ -1,0 +1,50 @@
+services:
+  backend:
+    build: ./backend  # Reemplaza con tu imagen de backend
+    ports:
+      - "5555:5555" # Exponiendo el puerto 5555
+    environment:
+      - NODE_ENV=production # Ajusta según tus necesidades
+    depends_on:
+      - dex          # hay que asegurarse que dex esté listo
+      - apisix       # hay que asegurarse que apisix esté listo
+      - nats         # hay que asegurarse que NATS esté listo
+    networks:
+      - app-network
+
+  dex:
+    image: dexidp/dex # Imagen de Dex
+    ports:
+      - "5556:5556" # Exponiendo el puerto 5556
+    environment:
+      - DEX_CONFIG=/etc/dex/config.yaml # Ajusta según tu configuración
+ 
+  nats:
+    image: nats:latest # Imagen de NATS
+    ports:
+      - "4222:4222" # Exponiendo el puerto 4222 para NATS
+    networks:
+      - app-network
+
+  main_app:
+    build: ./main_app  # Reemplaza con la ruta a tu Dockerfile de la aplicación principal
+    ports:
+      - "3000:3000" # Exponiendo el puerto 3000
+    environment:
+      - NODE_ENV=production # Ajusta según tus necesidades
+    networks:
+      - app-network
+      
+  apisix:
+    image: apache/apisix # Imagen de Apache APISIX
+    ports:
+      - "9080:9080"   # Puerto de HTTP
+      - "9443:9443"   # Puerto de HTTPS
+    volumes:
+      - ./apisix/conf:/usr/local/apisix/conf # Montando tu configuración
+    networks:
+      - app-network  # Añadido para que dex esté en la misma red
+
+networks:
+  app-network:
+    driver: bridge
