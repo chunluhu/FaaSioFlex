@@ -132,5 +132,26 @@ jobs:
               fi
             fi
           }
-
+      - name: Deploy Auth Application
+        run: |
+          deploy_auth() {
+            echo "Checking if auth needs to be built..."
+            
+            # Verificar si hay cambios en el módulo auth
+            if [[ " ${filtered_apps[@]} " =~ " auth " ]]; then
+              echo "Detected changes in auth. Deploying..."
+              
+              # Navegar al directorio de auth y desplegar
+              cd ./src/auth || exit 1
+              
+              # Construir y desplegar usando Docker Compose
+              docker-compose up -d --build
+              
+              # O también puedes usar docker build si tienes un Dockerfile
+              # docker build -t ${{ secrets.DOCKER_USERNAME }}/auth:latest .
+              # docker push ${{ secrets.DOCKER_USERNAME }}/auth:latest
+            else
+              echo "No changes detected in auth. Skipping deployment."
+            fi
+          }
           build_and_push_docker_images
