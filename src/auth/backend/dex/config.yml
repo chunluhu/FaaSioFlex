@@ -1,0 +1,16 @@
+issuer: http://dex:5556
+storage:
+  type: sqlite3
+  config:
+    file: /mnt/dex.db
+web:
+  http: 0.0.0.0:5556
+  https: 0.0.0.0:443
+  redirectURI: http://localhost:3000/callback
+staticClients:
+  - id: my-app
+    redirectURIs:
+      - http://localhost:3000/callback
+    secret: my-secret
+    name: My Application
+    public: true
